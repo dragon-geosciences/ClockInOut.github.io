@@ -13,6 +13,8 @@
   <br>
   <button id="startButton">上班</button>
   <button id="endButton">下班</button>
+  <div id="message"></div> <!-- 新增一個用於顯示訊息的元素 -->
+  
   <script>
     $('#startButton').click(function() {
       // 獲取輸入的Email、日期、時間和密碼
@@ -55,19 +57,9 @@
               minDistance: minDistance
             };
 
-            // 檢查IP位址是否在允許的範圍內
-            if (ipAddress !== '61.216.53.19' && ipAddress !== '60.249.132.61' && ipAddress !== '61.219.152.91') {
-              // IP位址不在允許的範圍內，顯示提示訊息
-              var message = "尚未連線至公司Wifi，您可選擇：<br>1. 您仍可以打卡，但該紀錄會通知主管以利備查。<br>2. 連上公司Wifi後重新整理網頁。";
-$('#message').html(message);
-} else if (minDistance < 0.3) {
-// 若minDistance小於0.3，顯示提示訊息
-var message = "尚未抵達打卡地點，請注意GPS是否已開啟。";
-$('#message').html(message);
-} else {
-// 發送 HTTP POST 請求
-$.ajax({
-url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
+            // 發送 HTTP POST 請求
+            $.ajax({
+              url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
 method: "POST",
 data: JSON.stringify(data),
 contentType: "application/json",
@@ -80,10 +72,11 @@ console.log("Error occurred during POST Request");
 console.log(error); // 處理錯誤
 }
 });
-}
 });
 });
 } else {
+// 若偵測到使用裝置為桌機，則在網頁下方顯示訊息
+$('#message').text("目前僅提供行動裝置使用");
 console.log("Geolocation is not supported by this browser.");
 }
 });
@@ -128,25 +121,13 @@ $('#endButton').click(function() {
           minDistance: minDistance
         };
 
-        // 檢查IP位址是否在允許的範圍內
-var allowedIPs = ["61.216.53.19", "60.249.132.61", "61.219.152.91"];
-if (!allowedIPs.includes(ipAddress)) {
-// 若目前的IP不在允許的範圍內，顯示提示訊息
-var message =
-"尚未連線至公司Wifi，您可選擇：<br>1. 您仍可以打卡，但該紀錄會通知主管以利備查。<br>2. 連上公司Wifi後重新整理網頁。";
-$('#message').html(message);
-} else if (minDistance < 0.3) {
-// 若minDistance小於0.3，顯示提示訊息
-var message = "尚未抵達打卡地點，請注意GPS是否已開啟。";
-$('#message').html(message);
-} else {
-// 發送 HTTP POST 請求
-$.ajax({
-url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
-method: "POST",
-data: JSON.stringify(data),
-contentType: "application/json",
-success: function(response) {
+        // 發送 HTTP POST 請求
+        $.ajax({
+          url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
+          method: "POST",
+          data: JSON.stringify(data),
+          contentType: "application/json",
+          success: function(response) {
 console.log("POST Request successful");
 console.log(response); // 處理回應
 },
@@ -155,10 +136,11 @@ console.log("Error occurred during POST Request");
 console.log(error); // 處理錯誤
 }
 });
-}
 });
 });
 } else {
+// 若偵測到使用裝置為桌機，則在網頁下方顯示訊息
+$('#message').text("目前僅提供行動裝置使用");
 console.log("Geolocation is not supported by this browser.");
 }
 });
@@ -182,8 +164,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
-</script>
-
+  </script>
 </body>
 </html>
 
