@@ -55,14 +55,24 @@
               minDistance: minDistance
             };
 
-            // 發送 HTTP POST 請求
-            $.ajax({
-              url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
-              method: "POST",
-              data: JSON.stringify(data),
-              contentType: "application/json",
-              success: function(response) {
-                console.log("POST Request successful");
+            // 檢查IP位址是否在允許的範圍內
+            if (ipAddress !== '61.216.53.19' && ipAddress !== '60.249.132.61' && ipAddress !== '61.219.152.91') {
+              // IP位址不在允許的範圍內，顯示提示訊息
+              var message = "尚未連線至公司Wifi，您可選擇：<br>1. 您仍可以打卡，但該紀錄會通知主管以利備查。<br>2. 連上公司Wifi後重新整理網頁。";
+$('#message').html(message);
+} else if (minDistance < 0.3) {
+// 若minDistance小於0.3，顯示提示訊息
+var message = "尚未抵達打卡地點，請注意GPS是否已開啟。";
+$('#message').html(message);
+} else {
+// 發送 HTTP POST 請求
+$.ajax({
+url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
+method: "POST",
+data: JSON.stringify(data),
+contentType: "application/json",
+success: function(response) {
+console.log("POST Request successful");
 console.log(response); // 處理回應
 },
 error: function(error) {
@@ -70,6 +80,7 @@ console.log("Error occurred during POST Request");
 console.log(error); // 處理錯誤
 }
 });
+}
 });
 });
 } else {
@@ -117,47 +128,59 @@ $('#endButton').click(function() {
           minDistance: minDistance
         };
 
-        // 發送 HTTP POST 請求
-        $.ajax({
-          url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
-          method: "POST",
-          data: JSON.stringify(data),
-          contentType: "application/json",
-          success: function(response) {
-            console.log("POST Request successful");
-            console.log(response); // 處理回應
-          },
-          error: function(error) {
-            console.log("Error occurred during POST Request");
-            console.log(error); // 處理錯誤
-          }
-        });
-      });
-    });
-  } else {
-    console.log("Geolocation is not supported by this browser.");
-  }
+        // 檢查IP位址是否在允許的範圍內
+var allowedIPs = ["61.216.53.19", "60.249.132.61", "61.219.152.91"];
+if (!allowedIPs.includes(ipAddress)) {
+// 若目前的IP不在允許的範圍內，顯示提示訊息
+var message =
+"尚未連線至公司Wifi，您可選擇：<br>1. 您仍可以打卡，但該紀錄會通知主管以利備查。<br>2. 連上公司Wifi後重新整理網頁。";
+$('#message').html(message);
+} else if (minDistance < 0.3) {
+// 若minDistance小於0.3，顯示提示訊息
+var message = "尚未抵達打卡地點，請注意GPS是否已開啟。";
+$('#message').html(message);
+} else {
+// 發送 HTTP POST 請求
+$.ajax({
+url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
+method: "POST",
+data: JSON.stringify(data),
+contentType: "application/json",
+success: function(response) {
+console.log("POST Request successful");
+console.log(response); // 處理回應
+},
+error: function(error) {
+console.log("Error occurred during POST Request");
+console.log(error); // 處理錯誤
+}
 });
-
+}
+});
+});
+} else {
+console.log("Geolocation is not supported by this browser.");
+}
+});
 // 計算經緯度之間的距離（單位：公里）
 function calculateDistance(lat1, lon1, lat2, lon2) {
-var R = 6371; // 地球半徑（單位：公里）
-var dLat = deg2rad(lat2 - lat1); // 緯度差值的弧度表示
-var dLon = deg2rad(lon2 - lon1); // 經度差值的弧度表示
+  var R = 6371; // 地球半徑（單位：公里）
+  var dLat = deg2rad(lat2 - lat1); // 緯度差值的弧度表示
+  var dLon = deg2rad(lon2 - lon1); // 經度差值的弧度表示
 
-var a =
-Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
-var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-var distance = R * c; // 兩點間的距離（單位：公里）
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var distance = R * c; // 兩點間的距離（單位：公里）
 
-return distance;
+  return distance;
 }
 
 // 將角度轉換為弧度
 function deg2rad(deg) {
-return deg * (Math.PI / 180);
+  return deg * (Math.PI / 180);
 }
 </script>
 
