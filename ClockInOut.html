@@ -5,42 +5,42 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-  <h2>½Ğ¶ñ¼g±zªºEmail</h2>
+  <h2>è«‹å¡«å¯«æ‚¨çš„Email</h2>
   <input type="text" id="emailInput" placeholder="Email">
   <span>@dragon-geosciences.com</span>
   <br>
-  <input type="password" id="passwordInput" placeholder="±K½X">
+  <input type="password" id="passwordInput" placeholder="å¯†ç¢¼">
   <br>
-  <button id="startButton">¤W¯Z</button>
-  <button id="endButton">¤U¯Z</button>
+  <button id="startButton">ä¸Šç­</button>
+  <button id="endButton">ä¸‹ç­</button>
   <script>
     $('#startButton').click(function() {
-      // Àò¨ú¿é¤JªºEmail¡B¤é´Á¡B®É¶¡©M±K½X
+      // ç²å–è¼¸å…¥çš„Emailã€æ—¥æœŸã€æ™‚é–“å’Œå¯†ç¢¼
       var email = $('#emailInput').val() + '@dragon-geosciences.com';
       var password = $('#passwordInput').val();
       var now = new Date();
       var date = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
       var time = now.getHours() + ':' + now.getMinutes();
 
-      // Àò¨úÂsÄı¾¹ªº¦a²z¦ì¸m
+      // ç²å–ç€è¦½å™¨çš„åœ°ç†ä½ç½®
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
           var latitude = position.coords.latitude;
           var longitude = position.coords.longitude;
 
-          // ­pºâ»P¥Ø¼Ğ¸g½n«×ªº¶ZÂ÷
+          // è¨ˆç®—èˆ‡ç›®æ¨™ç¶“ç·¯åº¦çš„è·é›¢
           var distance1 = calculateDistance(latitude, longitude, 22.6269627, 120.3101946);
           var distance2 = calculateDistance(latitude, longitude, 22.6084169, 120.2735785);
           var distance3 = calculateDistance(latitude, longitude, 22.6087448, 120.2734469);
 
-          // ¨ú³Ì¤p¶ZÂ÷
+          // å–æœ€å°è·é›¢
           var minDistance = Math.min(distance1, distance2, distance3);
 
-          // Àò¨ú¥Ø«eªºIP¦ì§}
+          // ç²å–ç›®å‰çš„IPä½å€
           $.getJSON('https://api.ipify.org?format=json', function(data) {
             var ipAddress = data.ip;
 
-            // ºc«Ø­n¶Ç»¼ªº¼Æ¾Ú¹ï¶H
+            // æ§‹å»ºè¦å‚³éçš„æ•¸æ“šå°è±¡
             var data = {
               email: email,
               password: password,
@@ -53,7 +53,7 @@
               minDistance: minDistance
             };
 
-            // µo°e HTTP POST ½Ğ¨D
+            // ç™¼é€ HTTP POST è«‹æ±‚
             $.ajax({
               url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
               method: "POST",
@@ -61,11 +61,11 @@
               contentType: "application/json",
               success: function(response) {
                 console.log("POST Request successful");
-                console.log(response); // ³B²z¦^À³
+                console.log(response); // è™•ç†å›æ‡‰
 },
 error: function(error) {
 console.log("Error occurred during POST Request");
-console.log(error); // ³B²z¿ù»~
+console.log(error); // è™•ç†éŒ¯èª¤
 }
 });
 });
@@ -75,32 +75,32 @@ console.log("Geolocation is not supported by this browser.");
 }
 });
 $('#endButton').click(function() {
-  // Àò¨ú¿é¤JªºEmail¡B¤é´Á¡B®É¶¡©M±K½X
+  // ç²å–è¼¸å…¥çš„Emailã€æ—¥æœŸã€æ™‚é–“å’Œå¯†ç¢¼
   var email = $('#emailInput').val() + '@dragon-geosciences.com';
   var password = $('#passwordInput').val();
   var now = new Date();
   var date = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
   var time = now.getHours() + ':' + now.getMinutes();
 
-  // Àò¨úÂsÄı¾¹ªº¦a²z¦ì¸m
+  // ç²å–ç€è¦½å™¨çš„åœ°ç†ä½ç½®
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       var latitude = position.coords.latitude;
       var longitude = position.coords.longitude;
 
-      // ­pºâ»P¥Ø¼Ğ¸g½n«×ªº¶ZÂ÷
+      // è¨ˆç®—èˆ‡ç›®æ¨™ç¶“ç·¯åº¦çš„è·é›¢
       var distance1 = calculateDistance(latitude, longitude, 22.6269627, 120.3101946);
       var distance2 = calculateDistance(latitude, longitude, 22.6084169, 120.2735785);
       var distance3 = calculateDistance(latitude, longitude, 22.6087448, 120.2734469);
 
-      // ¨ú³Ì¤p¶ZÂ÷
+      // å–æœ€å°è·é›¢
       var minDistance = Math.min(distance1, distance2, distance3);
 
-      // Àò¨ú¥Ø«eªºIP¦ì§}
+      // ç²å–ç›®å‰çš„IPä½å€
       $.getJSON('https://api.ipify.org?format=json', function(data) {
         var ipAddress = data.ip;
 
-        // ºc«Ø­n¶Ç»¼ªº¼Æ¾Ú¹ï¶H
+        // æ§‹å»ºè¦å‚³éçš„æ•¸æ“šå°è±¡
         var data = {
           email: email,
           password: password,
@@ -113,7 +113,7 @@ $('#endButton').click(function() {
           minDistance: minDistance
         };
 
-        // µo°e HTTP POST ½Ğ¨D
+        // ç™¼é€ HTTP POST è«‹æ±‚
         $.ajax({
           url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
           method: "POST",
@@ -121,11 +121,11 @@ $('#endButton').click(function() {
           contentType: "application/json",
           success: function(response) {
             console.log("POST Request successful");
-            console.log(response);  // ³B²z¦^À³
+            console.log(response);  // è™•ç†å›æ‡‰
           },
           error: function(error) {
             console.log("Error occurred during POST Request");
-            console.log(error);  // ³B²z¿ù»~
+            console.log(error);  // è™•ç†éŒ¯èª¤
           }
         });
       });
@@ -135,24 +135,24 @@ $('#endButton').click(function() {
   }
 });
 
-// ­pºâ¸g½n«×¤§¶¡ªº¶ZÂ÷¡]³æ¦ì¡G¤½¨½¡^
+// è¨ˆç®—ç¶“ç·¯åº¦ä¹‹é–“çš„è·é›¢ï¼ˆå–®ä½ï¼šå…¬é‡Œï¼‰
 function calculateDistance(lat1, lon1, lat2, lon2) {
  
-  var R = 6371; // ¦a²y¥b®|¡]³æ¦ì¡G¤½¨½¡^
-  var dLat = deg2rad(lat2 - lat1); // ½n«×®t­Èªº©·«×ªí¥Ü
-  var dLon = deg2rad(lon2 - lon1); // ¸g«×®t­Èªº©·«×ªí¥Ü
+  var R = 6371; // åœ°çƒåŠå¾‘ï¼ˆå–®ä½ï¼šå…¬é‡Œï¼‰
+  var dLat = deg2rad(lat2 - lat1); // ç·¯åº¦å·®å€¼çš„å¼§åº¦è¡¨ç¤º
+  var dLon = deg2rad(lon2 - lon1); // ç¶“åº¦å·®å€¼çš„å¼§åº¦è¡¨ç¤º
 
   var a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  var distance = R * c; // ¨âÂI¶¡ªº¶ZÂ÷¡]³æ¦ì¡G¤½¨½¡^
+  var distance = R * c; // å…©é»é–“çš„è·é›¢ï¼ˆå–®ä½ï¼šå…¬é‡Œï¼‰
 
   return distance;
 }
 
-// ±N¨¤«×Âà´«¬°©·«×
+// å°‡è§’åº¦è½‰æ›ç‚ºå¼§åº¦
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
