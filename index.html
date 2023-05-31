@@ -27,6 +27,7 @@
         navigator.geolocation.getCurrentPosition(function(position) {
           var latitude = position.coords.latitude;
           var longitude = position.coords.longitude;
+          var altitude = position.coords.altitude; // 獲取海拔高度
 
           // 計算與目標經緯度的距離
           var distance1 = calculateDistance(latitude, longitude, 22.6269627, 120.3101946);
@@ -48,6 +49,7 @@
               time: time,
               latitude: latitude,
               longitude: longitude,
+              altitude: altitude,
               ipAddress: ipAddress,
               ksitype: 1,
               minDistance: minDistance
@@ -61,7 +63,7 @@
               contentType: "application/json",
               success: function(response) {
                 console.log("POST Request successful");
-                console.log(response); // 處理回應
+console.log(response); // 處理回應
 },
 error: function(error) {
 console.log("Error occurred during POST Request");
@@ -87,6 +89,7 @@ $('#endButton').click(function() {
     navigator.geolocation.getCurrentPosition(function(position) {
       var latitude = position.coords.latitude;
       var longitude = position.coords.longitude;
+      var altitude = position.coords.altitude; // 獲取海拔高度
 
       // 計算與目標經緯度的距離
       var distance1 = calculateDistance(latitude, longitude, 22.6269627, 120.3101946);
@@ -108,6 +111,7 @@ $('#endButton').click(function() {
           time: time,
           latitude: latitude,
           longitude: longitude,
+          altitude: altitude,
           ipAddress: ipAddress,
           ksitype: 2,
           minDistance: minDistance
@@ -121,11 +125,11 @@ $('#endButton').click(function() {
           contentType: "application/json",
           success: function(response) {
             console.log("POST Request successful");
-            console.log(response);  // 處理回應
+            console.log(response); // 處理回應
           },
           error: function(error) {
             console.log("Error occurred during POST Request");
-            console.log(error);  // 處理錯誤
+            console.log(error); // 處理錯誤
           }
         });
       });
@@ -137,25 +141,26 @@ $('#endButton').click(function() {
 
 // 計算經緯度之間的距離（單位：公里）
 function calculateDistance(lat1, lon1, lat2, lon2) {
- 
-  var R = 6371; // 地球半徑（單位：公里）
-  var dLat = deg2rad(lat2 - lat1); // 緯度差值的弧度表示
-  var dLon = deg2rad(lon2 - lon1); // 經度差值的弧度表示
+var R = 6371; // 地球半徑（單位：公里）
+var dLat = deg2rad(lat2 - lat1); // 緯度差值的弧度表示
+var dLon = deg2rad(lon2 - lon1); // 經度差值的弧度表示
 
-  var a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+var a =
+Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  var distance = R * c; // 兩點間的距離（單位：公里）
+var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+var distance = R * c; // 兩點間的距離（單位：公里）
 
-  return distance;
+return distance;
 }
 
 // 將角度轉換為弧度
 function deg2rad(deg) {
-  return deg * (Math.PI / 180);
+return deg * (Math.PI / 180);
 }
- </script>
+</script>
+
 </body>
 </html>
+
