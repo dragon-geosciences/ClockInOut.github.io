@@ -3,25 +3,147 @@
 <head>
   <title>Post to Azure Logic Apps</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-top: 30px;
+    }
+
+    #ShowDateTime {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      span {
+        font-size: 14px;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .message {
+        font-size: 14px;
+        margin-top: 10px;
+        display: none;
+      }
+    }
+
+    /* RWD - Medium screens */
+    @media only screen and (min-width: 768px) {
+      h1 {
+        font-size: 36px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 50%;
+        font-size: 18px;
+      }
+
+      span {
+        font-size: 16px;
+      }
+
+      button {
+        width: 50%;
+        font-size: 18px;
+      }
+    }
+
+    /* RWD - Large screens */
+    @media only screen and (min-width: 1024px) {
+      h1 {
+        font-size: 48px;
+      }
+
+      h2 {
+        font-size: 32px;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 30%;
+        font-size: 20px;
+      }
+
+      span {
+        font-size: 18px;
+      }
+
+      button {
+        width: 30%;
+        font-size: 20px;
+      }
+    }
+  </style>
 </head>
-<body>    
+<body>
+  <h1>DG備援打卡系統</h1>
+  <h2><span id="ShowDateTime"></span></h2>
   <h2>請填寫您的Email</h2>
   <input type="text" id="emailInput" placeholder="Email">
   <span>@dragon-geosciences.com</span>
   <br>
-  <input type="password" id="passwordInput" placeholder="密碼">
+  <input type="password" id="passwordInput" placeholder="通行密碼">
   <br>
   <br>
   <h2>GPS+Wifi 打卡</h2>
   <button id="startButton">上班</button>
-  <button id="endButton">下班</button>
-  <h2>GPS 打卡</h2>
+  <button id="endButton">下班</button><span id="message" class="message"></span>
+  <h2>GPS 打卡(Manager Informed)</h2>
   <button id="startButtonGps">上班</button>
-  <button id="endButtonGps">下班</button>
-  <h2>Wifi 打卡</h2>
+  <button id="endButtonGps">下班</button><span id="messageGps" class="messageGps"></span>
+  <h2>Wifi 打卡(Manager Informed, Desktop Available)</h2>
   <button id="startButtonWifi">上班</button>
-  <button id="endButtonWifi">下班</button>
-  <script>      
+  <button id="endButtonWifi">下班</button><span id="messageWifi" class="messageWifi"></span>
+  <script>
+    function showDateTime() {
+      var date = new Date();
+      var year = date.getFullYear();
+      var month = date.getMonth() + 1;
+      var day = date.getDate();
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+
+      if (hours < 10) hours = "0" + hours;
+      if (minutes < 10) minutes = "0" + minutes
+      var dateTimeString = year + "/" + month + "/" + day + " " + hours + ":" + minutes;
+
+      document.getElementById("ShowDateTime").innerHTML = dateTimeString;
+    }
+
+    setInterval(showDateTime, 1000);
+
     function sendPostRequest(data) {
       $.ajax({
         url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
@@ -30,132 +152,144 @@
         contentType: "application/json",
         success: function(response) {
           console.log("POST Request successful");
-          console.log(response); // 處理回應
+          console.log(response);
         },
         error: function(error) {
           console.log("Error occurred during POST Request");
-          console.log(error); // 處理錯誤
+          console.log(error);
         }
       });
     }
 
     function getLocationAndSendData(ksitype, minDistance, method) {
-      // 獲取輸入的Email、日期、時間和密碼
       var email = $('#emailInput').val() + '@dragon-geosciences.com';
       var password = $('#passwordInput').val();
       var now = new Date();
       var date = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+      var dateMM = new Date();
+      var hours = dateMM.getHours();
+      var minutes = dateMM.getMinutes();
+      if (hours < 10) hours = "0" + hours;
+      if (minutes < 10) minutes = "0" + minutes;
+      var time = hours + ":" + minutes;
+      
       var time = now.getHours() + ':' + now.getMinutes();
 
-      // 獲取瀏覽器的地理位置
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
           var latitude = position.coords.latitude;
           var longitude = position.coords.longitude;
-          var altitude = position.coords.altitude; // 獲取海拔高度
+          var altitude = position.coords.altitude;
+          var distance1 = calculateDistance(latitude, longitude, 22.6269627, 120.3101946);
+          var distance2 = calculateDistance(latitude, longitude, 22.6084169, 120.2735785);
+          var distance3 = calculateDistance(latitude, longitude, 22.6087448, 120.2734469);
+          var minDistance = Math.min(distance1, distance2, distance3);
 
-          // 計算與目標經緯度的距離
-var distance1 = calculateDistance(latitude, longitude, 22.6269627, 120.3101946);
-var distance2 = calculateDistance(latitude, longitude, 22.6084169, 120.2735785);
-var distance3 = calculateDistance(latitude, longitude, 22.6087448, 120.2734469);
-      // 取最小距離
-      var minDistance = Math.min(distance1, distance2, distance3);
+          $.getJSON('https://api.ipify.org?format=json', function(data) {
+            var ipAddress = data.ip;
 
-      // 獲取目前的IP位址
-      $.getJSON('https://api.ipify.org?format=json', function(data) {
-        var ipAddress = data.ip;
+            var requestData = {
+              email: email,
+              password: password,
+              date: date,
+              time: time,
+              latitude: latitude,
+              longitude: longitude,
+              altitude: altitude,
+              ipAddress: ipAddress,
+              ksitype: ksitype,
+              minDistance: minDistance,
+              method: method,
+              device: getDeviceType()
+            };
 
-        // 構建要傳遞的數據對象
-        var requestData = {
-          email: email,
-          password: password,
-          date: date,
-          time: time,
-          latitude: latitude,
-          longitude: longitude,
-          altitude: altitude,
-          ipAddress: ipAddress,
-          ksitype: ksitype,
-          minDistance: minDistance,
-          method: method,
-          device: getDeviceType() // 獲取使用者裝置類型
-        };
-
-        // 發送 HTTP POST 請求
-        sendPostRequest(requestData);
-      });
-    });
-  } else {
-    console.log("Geolocation is not supported by this browser.");
-  }
-}
-
-// 獲取使用者的裝置類型
-function getDeviceType() {
-  var userAgent = navigator.userAgent.toLowerCase();
-  var isMobile = /iphone|ipod|ipad|android|blackberry|opera mini|iemobile|mobile/i.test(userAgent);
-  return isMobile ? "Mobile" : "Desktop";
-}
-
-$('#startButton').click(function() {
-  getLocationAndSendData(1, null,"WifiGps");
-});
-
-$('#endButton').click(function() {
-  getLocationAndSendData(2, null,"WifiGps");
-});
-
-$('#startButtonGps').click(function() {
-  getLocationAndSendData(1, null,"OnlyGps");
-});
-
-$('#endButtonGps').click(function() {
-  getLocationAndSendData(2, null,"OnlyGps");
-});
-
-$('#startButtonWifi').click(function() {
-  getLocationAndSendData(1, null,"OnlyWifi");
-});
-
-$('#endButtonWifi').click(function() {
-  getLocationAndSendData(2, null,"OnlyWifi");
-});
-
-// 發送 HTTP POST 請求的函數
-function sendPostRequest(data) {
-  $.ajax({
-    url: "https://prod-33.southeastasia.logic.azure.com:443/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=f5kNgWYVBd0fL-HI2qip1mQkH7WyPQrlya8OEqCAL_4",
-    method: "POST",
-    data: JSON.stringify(data),
-    contentType: "application/json",
-    success: function(response) {
-      console.log("POST Request successful");
-      console.log(response); // 處理回應
-    },
-    error: function(error) {
-      console.log("Error occurred during POST Request");
-      console.log(error); // 處理錯誤
+            sendPostRequest(requestData);
+          });
+        });
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+      }
     }
-  });
-}
 
-// 計算經度與緯度之間的距離的函數
-function calculateDistance(lat1, lon1, lat2, lon2) {
-var R = 6371; // 地球半徑（單位：公里）
-var dLat = toRad(lat2 - lat1);
-var dLon = toRad(lon2 - lon1);
-var a =
-Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-Math.sin(dLon / 2) * Math.sin(dLon / 2);
-var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-var distance = R * c; // 距離（單位：公里）
-return distance;
-}
-// 將角度轉換為弧度
-function toRad(degrees) {
-  return degrees * Math.PI / 180;
-}
+    function getDeviceType() {
+      var userAgent = navigator.userAgent.toLowerCase();
+      var isMobile = /iphone|ipod|ipad|android|blackberry|opera mini|iemobile|mobile/i.test(userAgent);
+      return isMobile ? "Mobile" : "Desktop";
+    }
+
+    var startButtonClicked = false;
+
+    $('#startButton').click(function() {
+      if (!startButtonClicked) {
+        getLocationAndSendData(1, null, "WifiGps");
+        startButtonClicked = true;
+        $(this).text("已送出");
+        $(this).prop("disabled", true);
+        $("#message").text(" - " + new Date().toLocaleString());
+        $("#message").show();
+      }
+    });
+
+        $('#endButton').click(function() {
+      getLocationAndSendData(2, null, "WifiGps");
+      $("#message").text(" - " + new Date().toLocaleString());
+      $("#message").show();
+    });
+
+    var startButtonGpsClicked = false;
+
+    $('#startButtonGps').click(function() {
+      if (!startButtonGpsClicked) {
+        getLocationAndSendData(1, null, "OnlyGps");
+        startButtonGpsClicked = true;
+        $(this).text("已送出");
+        $(this).prop("disabled", true);
+        $("#messageGps").text(" - " + new Date().toLocaleString());
+        $("#messageGps").show();
+      }
+    });
+
+    $('#endButtonGps').click(function() {
+      getLocationAndSendData(2, null, "OnlyGps");
+      $("#messageGps").text(" - " + new Date().toLocaleString());
+      $("#messageGps").show();
+    });
+
+    var startButtonWifiClicked = false;
+
+    $('#startButtonWifi').click(function() {
+      if (!startButtonWifiClicked) {
+        getLocationAndSendData(1, null, "OnlyWifi");
+        startButtonWifiClicked = true;
+        $(this).text("已送出");
+        $(this).prop("disabled", true);
+        $("#messageWifi").text(" - " + new Date().toLocaleString());
+        $("#messageWifi").show();
+      }
+    });
+
+    $('#endButtonWifi').click(function() {
+      getLocationAndSendData(2, null, "OnlyWifi");
+      $("#messageWifi").text(" - " + new Date().toLocaleString());
+      $("#messageWifi").show();
+    });
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      var R = 6371; // Radius of the earth in km
+      var dLat = deg2rad(lat2 - lat1); // deg2rad below
+      var dLon = deg2rad(lon2 - lon1);
+      var a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      var d = R * c; // Distance in km
+      return d;
+    }
+
+    function deg2rad(deg) {
+      return deg * (Math.PI / 180);
+    }
   </script>
 </body>
 </html>
