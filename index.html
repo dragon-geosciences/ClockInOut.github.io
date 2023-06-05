@@ -6,18 +6,21 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding-right: 10%;
-      padding-left: 10%;
+      padding-right: 5%;
+      padding-left: 5%;
       padding-top: 7%;
       padding-bottom: 7%;
     }
 
     h1 {
+      padding-top: 2%;
       font-size: 40px;
       text-align: center;
     }
 
     h2 {
+      padding-right: 5%;
+      padding-left: 5%;
       font-size: 36px;
       margin-top: 30px;
     }
@@ -29,6 +32,7 @@
 
     input[type="text"],
     input[type="password"] {
+        margin-left: 5%;
         width: 50%;
         padding: 10px;
         margin-bottom: 10px;
@@ -36,6 +40,7 @@
       }
 
       span {
+
         font-size: 28px;
       }
 
@@ -43,7 +48,9 @@
         
         width: 40%;
         padding: 10px;
+        margin-left: 5%;
         margin-top: 10px;
+        margin-bottom: 2%;
         font-size: 28px;
         cursor: pointer;
       }
@@ -129,10 +136,19 @@
     }
   </style>
 </head>
+
+<div style= "background: linear-gradient(10deg, rgba(255,255,255,0.75) 35%, rgba(255,255,255,1) 60%); 
+box-shadow: 1px 2px 22px 0px rgba(89,87,87,0.85);
+margin:5%; 
+width: 100%; 
+height: 90%; 
+border-radius: 10px">
+
+
 <body>
-  <h1>DG備援打卡系統</h1>
+  <h1>DG備援打卡系統1</h1>
   <h2><span id="ShowDateTime"></span></h2>
-  <h2>請填寫您的Email及員工的編號</h2>
+  <h2>請填寫您的Email及員工編號</h2>
   <input type="text" id="emailInput" placeholder="Email">
   <span>@dragon-geosciences.com</span>
   <br>
@@ -313,6 +329,7 @@
       return deg * (Math.PI / 180);
     }
   </script>
+  </div>
 </body>
 </html>
 
