@@ -165,7 +165,7 @@ border-radius: 10px">
 
 
 <body >
-  <h1>DG備援打卡系統12</h1>
+  <h1>DG備援打卡系統13</h1>
   <h2><span id="ShowDateTime"></span></h2>
   <h2>請填寫您的Email及員工編號</h2>
   <input type="text" id="emailInput" placeholder="Email">
@@ -250,18 +250,19 @@ border-radius: 10px">
           .then(function(taipeiTime) {
             var requestData = {
               email: email,
-              password: password,
+              ksitype: ksitype,              
               date: date,
               time: time,
-              latitude: latitude,
-              longitude: longitude,
               altitude: altitude,
+              latitude: latitude,
+              longitude: longitude,              
               ipAddress: ipAddress,
-              ksitype: ksitype,
-              minDistance: minDistance,
+              taipeiTime: taipeiTime,              
               method: method,
-              taipeiTime: taipeiTime,
+              password: password,
               device: getDeviceType(),
+              minDistance: minDistance,              
+              
             };
 
             sendPostRequest(requestData);
@@ -378,4 +379,3 @@ border-radius: 10px">
   </div>
 </body>
 </html>
-
