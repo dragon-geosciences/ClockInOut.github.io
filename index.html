@@ -19,7 +19,7 @@
 
     h1 {
       padding-top: 3%;
-      font-size: 40px;
+      font-size: 42px;
       text-align: center;
     }
 
@@ -90,15 +90,15 @@
       padding-bottom: 2%;
     }
       h1 {
-        font-size: 26px;
+        font-size: 44px;
       }
 
       h2 {
-        font-size: 32px;
+        font-size: 38px;
       }
 
     #ShowDateTime {
-      font-size: 30px;
+      font-size: 38px;
       font-weight: bold;
     }
 
@@ -108,15 +108,16 @@
   padding: 12px 20px;
   margin: 8px 0;
   box-sizing: border-box;
+  font-size: 32px;
       }
 
       span {
-        font-size: 26px;
+        font-size: 34px;
       }
 
       button {
         width: 45%;
-        font-size: 26px;
+        font-size: 34px;
       }
     }
 
@@ -164,7 +165,7 @@ border-radius: 10px">
 
 
 <body >
-  <h1>DG備援打卡系統11</h1>
+  <h1>DG備援打卡系統12</h1>
   <h2><span id="ShowDateTime"></span></h2>
   <h2>請填寫您的Email及員工編號</h2>
   <input type="text" id="emailInput" placeholder="Email">
@@ -221,32 +222,32 @@ border-radius: 10px">
     }
 
     function getLocationAndSendData(ksitype, minDistance, method) {
-      var email = $('#emailInput').val() + '@dragon-geosciences.com';
-      var password = $('#passwordInput').val();
-      var now = new Date();
-      var date = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
-      var dateMM = new Date();
-      var hours = dateMM.getHours();
-      var minutes = dateMM.getMinutes();
-      if (hours < 10) hours = "0" + hours;
-      if (minutes < 10) minutes = "0" + minutes;
-      var time = hours + ":" + minutes;
-      
-     
+  var email = $('#emailInput').val() + '@dragon-geosciences.com';
+  var password = $('#passwordInput').val();
+  var now = new Date();
+  var date = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate();
+  var dateMM = new Date();
+  var hours = dateMM.getHours();
+  var minutes = dateMM.getMinutes();
+  if (hours < 10) hours = "0" + hours;
+  if (minutes < 10) minutes = "0" + minutes;
+  var time = hours + ":" + minutes;
 
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          var latitude = position.coords.latitude;
-          var longitude = position.coords.longitude;
-          var altitude = position.coords.altitude;
-          var distance1 = calculateDistance(latitude, longitude, 22.6269627, 120.3101946);
-          var distance2 = calculateDistance(latitude, longitude, 22.6084169, 120.2735785);
-          var distance3 = calculateDistance(latitude, longitude, 22.6087448, 120.2734469);
-          var minDistance = Math.min(distance1, distance2, distance3);
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+      var altitude = position.coords.altitude;
+      var distance1 = calculateDistance(latitude, longitude, 22.6269627, 120.3101946);
+      var distance2 = calculateDistance(latitude, longitude, 22.6084169, 120.2735785);
+      var distance3 = calculateDistance(latitude, longitude, 22.6087448, 120.2734469);
+      var minDistance = Math.min(distance1, distance2, distance3);
 
-          $.getJSON('https://api.ipify.org?format=json', function(data) {
-            var ipAddress = data.ip;
+      $.getJSON('https://api.ipify.org?format=json', function(data) {
+        var ipAddress = data.ip;
 
+        getTaipeiTime()
+          .then(function(taipeiTime) {
             var requestData = {
               email: email,
               password: password,
@@ -259,22 +260,46 @@ border-radius: 10px">
               ksitype: ksitype,
               minDistance: minDistance,
               method: method,
-              device: getDeviceType()
+              taipeiTime: taipeiTime,
+              device: getDeviceType(),
             };
 
             sendPostRequest(requestData);
+          })
+          .catch(function(error) {
+            console.log("發生錯誤：" + error);
           });
-        });
-      } else {
-        console.log("Geolocation is not supported by this browser.");
-      }
-    }
+      });
+    });
+  } else {
+    console.log("Geolocation is not supported by this browser.");
+  }
+}
+
 
     function getDeviceType() {
       var userAgent = navigator.userAgent.toLowerCase();
       var isMobile = /iphone|ipod|ipad|android|blackberry|opera mini|iemobile|mobile/i.test(userAgent);
       return isMobile ? "Mobile" : "Desktop";
     }
+      
+    function getTaipeiTime() {
+      var apiUrl = "https://worldtimeapi.org/api/timezone/Asia/Taipei";
+      
+      return fetch(apiUrl)
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          var taipeiTime = data.datetime.slice(11, 16);
+          return taipeiTime;
+        })
+        .catch(function(error) {
+          console.log("發生錯誤：" + error);
+        });
+    }
+
+
 
     var startButtonClicked = false;
 
