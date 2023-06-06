@@ -165,13 +165,13 @@ border-radius: 10px">
 
 
 <body >
-  <h1>DG備援打卡系統13</h1>
+  <h1>DG備援打卡系統14</h1>
   <h2><span id="ShowDateTime"></span></h2>
-  <h2>請填寫您的Email及員工編號</h2>
+  <h2>請填寫您的Email及打卡密碼</h2>
   <input type="text" id="emailInput" placeholder="Email">
   <span>@dragon-geosciences.com</span>
   <br>
-  <input type="password" id="passwordInput" placeholder="員工編號">
+  <input type="password" id="passwordInput" placeholder="打卡密碼">
   <br>
   <br>
   <h2>GPS+Wifi 打卡</h2>
@@ -306,7 +306,7 @@ border-radius: 10px">
 
     $('#startButton').click(function() {
       if (!startButtonClicked) {
-        getLocationAndSendData(1, null, "WifiGps");
+        getLocationAndSendData("1", null, "WifiGps");
         startButtonClicked = true;
         $(this).text("已送出");
         $(this).prop("disabled", true);
@@ -316,7 +316,7 @@ border-radius: 10px">
     });
 
         $('#endButton').click(function() {
-      getLocationAndSendData(2, null, "WifiGps");
+      getLocationAndSendData("2", null, "WifiGps");
       $("#message").text(" - " + new Date().toLocaleString());
       $("#message").show();
     });
@@ -325,7 +325,7 @@ border-radius: 10px">
 
     $('#startButtonGps').click(function() {
       if (!startButtonGpsClicked) {
-        getLocationAndSendData(1, null, "OnlyGps");
+        getLocationAndSendData("1", null, "OnlyGps");
         startButtonGpsClicked = true;
         $(this).text("已送出");
         $(this).prop("disabled", true);
@@ -335,7 +335,7 @@ border-radius: 10px">
     });
 
     $('#endButtonGps').click(function() {
-      getLocationAndSendData(2, null, "OnlyGps");
+      getLocationAndSendData("2", null, "OnlyGps");
       $("#messageGps").text(" - " + new Date().toLocaleString());
       $("#messageGps").show();
     });
@@ -344,7 +344,7 @@ border-radius: 10px">
 
     $('#startButtonWifi').click(function() {
       if (!startButtonWifiClicked) {
-        getLocationAndSendData(1, null, "OnlyWifi");
+        getLocationAndSendData("1", null, "OnlyWifi");
         startButtonWifiClicked = true;
         $(this).text("已送出");
         $(this).prop("disabled", true);
@@ -354,7 +354,7 @@ border-radius: 10px">
     });
 
     $('#endButtonWifi').click(function() {
-      getLocationAndSendData(2, null, "OnlyWifi");
+      getLocationAndSendData("2", null, "OnlyWifi");
       $("#messageWifi").text(" - " + new Date().toLocaleString());
       $("#messageWifi").show();
     });
