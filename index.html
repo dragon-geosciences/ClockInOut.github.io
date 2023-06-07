@@ -165,7 +165,7 @@ border-radius: 10px">
 
 
 <body >
-  <h1>DG備援打卡系統14</h1>
+  <h1>DG備援打卡系統15</h1>
   <h2><span id="ShowDateTime"></span></h2>
   <h2>請填寫您的Email及打卡密碼</h2>
   <input type="text" id="emailInput" placeholder="Email">
@@ -315,11 +315,16 @@ border-radius: 10px">
       }
     });
 
-        $('#endButton').click(function() {
-      getLocationAndSendData("2", null, "WifiGps");
-      $("#message").text(" - " + new Date().toLocaleString());
-      $("#message").show();
-    });
+$('#endButton').click(function() {
+  getLocationAndSendData("2", null, "WifiGps");
+  $("#message").text(" - " + new Date().toLocaleString());
+  $("#message").show();
+  $(this).prop("disabled", true);
+  setTimeout(function() {
+    $("#endButton").text("下班");
+    $("#endButton").prop("disabled", false);
+  }, 15000); // 15秒後恢復狀態
+});
 
     var startButtonGpsClicked = false;
 
@@ -334,11 +339,17 @@ border-radius: 10px">
       }
     });
 
-    $('#endButtonGps').click(function() {
-      getLocationAndSendData("2", null, "OnlyGps");
-      $("#messageGps").text(" - " + new Date().toLocaleString());
-      $("#messageGps").show();
-    });
+$('#endButtonGps').click(function() {
+  getLocationAndSendData("2", null, "OnlyGps");
+  $("#messageGps").text(" - " + new Date().toLocaleString());
+  $("#messageGps").show();
+  $(this).prop("disabled", true);
+  setTimeout(function() {
+    $("#endButtonGps").text("下班");
+    $("#endButtonGps").prop("disabled", false);
+  }, 15000); // 15秒後恢復狀態
+});
+
 
     var startButtonWifiClicked = false;
 
@@ -353,11 +364,16 @@ border-radius: 10px">
       }
     });
 
-    $('#endButtonWifi').click(function() {
-      getLocationAndSendData("2", null, "OnlyWifi");
-      $("#messageWifi").text(" - " + new Date().toLocaleString());
-      $("#messageWifi").show();
-    });
+$('#endButtonWifi').click(function() {
+  getLocationAndSendData("2", null, "OnlyWifi");
+  $("#messageWifi").text(" - " + new Date().toLocaleString());
+  $("#messageWifi").show();
+  $(this).prop("disabled", true);
+  setTimeout(function() {
+    $("#endButtonWifi").text("下班");
+    $("#endButtonWifi").prop("disabled", false);
+  }, 15000); // 15秒後恢復狀態
+});
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
       var R = 6371; // Radius of the earth in km
