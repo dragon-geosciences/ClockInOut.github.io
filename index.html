@@ -60,6 +60,7 @@
         cursor: pointer;
       }
 
+
       .message {
         font-size: 30px;
         margin-left: 3%;
@@ -165,14 +166,17 @@ border-radius: 10px">
 
 
 <body >
-  <h1>DG備援打卡系統15</h1>
+  <h1>DG備援打卡系統16</h1>
   <h2><span id="ShowDateTime"></span></h2>
   <h2>請填寫您的Email及打卡密碼</h2>
   <input type="text" id="emailInput" placeholder="Email">
   <span>@dragon-geosciences.com</span>
   <br>
   <input type="password" id="passwordInput" placeholder="打卡密碼">
+  <span><a href="https://apps.powerapps.com/play/e/bb11f212-1ae2-eb5d-8ce4-f378003e9486/a/cc0698c0-b4e6-4328-ab41-864959c42446?tenantId=4475b104-50f2-419f-a8fc-ac004dcde2c1&ScreenChoice=Password" target="_blank">《忘記密碼或建立密碼》</a></span>
+
   <br>
+  <button id="showPasswordButton" onclick="togglePasswordVisibility()">🔓顯示密碼</button>
   <br>
   <h2>GPS+Wifi 打卡</h2>
   <button id="startButton">上班</button>
@@ -187,6 +191,19 @@ border-radius: 10px">
   <button id="endButtonWifi">下班</button>
   <br><span id="messageWifi" class="messageWifi"></span>
   <script>
+  function togglePasswordVisibility() {
+  var passwordInput = document.getElementById("passwordInput");
+  var showPasswordButton = document.getElementById("showPasswordButton");
+  
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+    showPasswordButton.textContent = "🔒隱藏密碼";
+  } else {
+    passwordInput.type = "password";
+    showPasswordButton.textContent = "🔓顯示密碼";
+  }
+}
+  
     function showDateTime() {
       var date = new Date();
       var year = date.getFullYear();
