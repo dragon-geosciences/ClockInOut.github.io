@@ -166,7 +166,7 @@ border-radius: 10px">
 
 
 <body >
-  <h1>DG備援打卡系統16</h1>
+  <h1>DG備援打卡系統20</h1>
   <h2><span id="ShowDateTime"></span></h2>
   <h2>請填寫您的Email及打卡密碼</h2>
   <input type="text" id="emailInput" placeholder="Email">
@@ -176,7 +176,7 @@ border-radius: 10px">
   <span><a href="https://apps.powerapps.com/play/e/bb11f212-1ae2-eb5d-8ce4-f378003e9486/a/cc0698c0-b4e6-4328-ab41-864959c42446?tenantId=4475b104-50f2-419f-a8fc-ac004dcde2c1&ScreenChoice=Password" target="_blank">《忘記密碼或建立密碼》</a></span>
 
   <br>
-  <button id="showPasswordButton" onclick="togglePasswordVisibility()">🔓顯示密碼</button>
+  <button id="showPasswordButton" onclick="togglePasswordVisibility()">🔒顯示密碼</button>
   <br>
   <h2>GPS+Wifi 打卡</h2>
   <button id="startButton">上班</button>
@@ -190,6 +190,8 @@ border-radius: 10px">
   <button id="startButtonWifi">上班</button>
   <button id="endButtonWifi">下班</button>
   <br><span id="messageWifi" class="messageWifi"></span>
+  <h2>目前訊號狀態</h2>
+  <h2>Wifi: <span id="getWifi">載入中...</span> / GPS: <span id="location">載入中...</span></h2>
   <script>
   function togglePasswordVisibility() {
   var passwordInput = document.getElementById("passwordInput");
@@ -408,6 +410,59 @@ $('#endButtonWifi').click(function() {
     function deg2rad(deg) {
       return deg * (Math.PI / 180);
     }
+      
+    function getIP() {
+      fetch('https://api.ipify.org?format=json')
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          var ip = data.ip;
+          
+          // 判斷 IP 是否為 60.249.202.13
+          if (ip === '61.216.53.19'|| ip === '61.216.53.23'|| ip === '60.249.202.14'|| ip === '60.249.202.178'|| ip === '61.216.53.20'|| ip === '61.216.53.21'|| ip === '61.216.53.22'|| ip === '61.216.53.24'|| ip === '60.249.202.15'|| ip === '60.249.202.179'|| ip === '60.249.202.180') {
+            document.getElementById('getWifi').textContent = '正常';
+          } else if (ip === '61.219.152.91'|| ip === '60.249.132.61') {
+            document.getElementById('getWifi').textContent = '正常';
+          } else {
+            document.getElementById('getWifi').textContent = '未連線';
+          }
+        })
+        .catch(function(error) {
+          console.log("發生錯誤：" + error);
+        });
+    }
+      
+    function getMinDistance() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          var latitude = position.coords.latitude;
+          var longitude = position.coords.longitude;
+
+          var distance1 = calculateDistance(latitude, longitude, 22.6269627, 120.3101946);
+          var distance2 = calculateDistance(latitude, longitude, 22.6084169, 120.2735785);
+          var distance3 = calculateDistance(latitude, longitude, 22.6087448, 120.2734469);
+          var minDistance = Math.min(distance1, distance2, distance3);
+
+          if (minDistance < 0.3) {
+            document.getElementById('location').textContent = '正常';
+          } else {
+            document.getElementById('location').textContent = '尚未到達';
+          }
+        }, function(error) {
+          document.getElementById('location').textContent = '無法獲取位置資訊';
+          console.log('發生錯誤：' + error.message);
+        });
+      } else {
+        document.getElementById('location').textContent = '不支援地理位置定位';
+      }
+    }
+
+
+    // 在頁面載入完成後呼叫 getIP 函式
+    window.addEventListener('load', getIP);
+    window.addEventListener('load', getMinDistance);
+
   </script>
   </div>
 </body>
