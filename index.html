@@ -166,7 +166,7 @@ border-radius: 10px">
 
 
 <body >
-  <h1>DG備援打卡系統22</h1>
+  <h1>DG備援打卡系統23</h1>
   <h2><span id="ShowDateTime"></span></h2>
   <h2>請填寫您的Email及打卡密碼</h2>
   <input type="text" id="emailInput" placeholder="Email">
@@ -411,27 +411,43 @@ $('#endButtonWifi').click(function() {
       return deg * (Math.PI / 180);
     }
       
-    function getIP() {
-      fetch('https://api64.ipify.org?format=json')
-        .then(function(response) {
-          return response.json();
-        })
-        .then(function(data) {
-          var ip = data.ip;
-          
-          // 判斷 IP 是否為 60.249.202.13
-          if (ip === '61.216.53.19'|| ip === '61.216.53.23'|| ip === '60.249.202.14'|| ip === '60.249.202.178'|| ip === '61.216.53.20'|| ip === '61.216.53.21'|| ip === '61.216.53.22'|| ip === '61.216.53.24'|| ip === '60.249.202.15'|| ip === '60.249.202.179'|| ip === '60.249.202.180'|| ip === '60.249.202.13') {
-            document.getElementById('getWifi').textContent = '正常';
-          } else if (ip === '61.219.152.91'|| ip === '60.249.132.61') {
-            document.getElementById('getWifi').textContent = '正常';
-          } else {
-            document.getElementById('getWifi').textContent = '未連線';
-          }
-        })
-        .catch(function(error) {
-          console.log("發生錯誤：" + error);
-        });
-    }
+function getIP() {
+  fetch('https://api64.ipify.org?format=json')
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      var ip = data.ip;
+
+      // 定義包含正常地點 IP 的物件
+      var normalLocations = {
+        '61.216.53.19': true,
+        '61.216.53.23': true,
+        '60.249.202.14': true,
+        '60.249.202.178': true,
+        '61.216.53.20': true,
+        '61.216.53.21': true,
+        '61.216.53.22': true,
+        '61.216.53.24': true,
+        '60.249.202.15': true,
+        '60.249.202.179': true,
+        '60.249.202.180': true,
+        '60.249.202.13': true,
+        '61.219.152.91': true,
+        '60.249.132.61': true
+      };
+
+      // 判斷 IP 是否為正常地點
+      if (normalLocations[ip]) {
+        document.getElementById('getWifi').textContent = '正常';
+      } else {
+        document.getElementById('getWifi').textContent = '未連線';
+      }
+    })
+    .catch(function(error) {
+      console.log("發生錯誤：" + error);
+    });
+}
       
     function getMinDistance() {
       if (navigator.geolocation) {
