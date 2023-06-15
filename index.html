@@ -176,7 +176,7 @@ border-radius: 10px">
   <span><a href="https://apps.powerapps.com/play/e/bb11f212-1ae2-eb5d-8ce4-f378003e9486/a/cc0698c0-b4e6-4328-ab41-864959c42446?tenantId=4475b104-50f2-419f-a8fc-ac004dcde2c1&ScreenChoice=Password" target="_blank">《忘記密碼或建立密碼》</a></span>
 
   <br>
-  <button id="showPasswordButton" onclick="togglePasswordVisibility()">顯示密碼</button>
+  <button id="showPasswordButton" onclick="togglePasswordVisibility()">🔒顯示密碼</button>
   <br>
   <h2>GPS+Wifi 打卡</h2>
   <button id="startButton">上班</button>
@@ -199,10 +199,10 @@ border-radius: 10px">
   
   if (passwordInput.type === "password") {
     passwordInput.type = "text";
-    showPasswordButton.textContent = "隱藏密碼";
+    showPasswordButton.textContent = "🔒隱藏密碼";
   } else {
     passwordInput.type = "password";
-    showPasswordButton.textContent = "顯示密碼";
+    showPasswordButton.textContent = "🔓顯示密碼";
   }
 }
   
