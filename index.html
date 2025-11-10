@@ -17,6 +17,7 @@
     }
     h1 { font-size: 44px; text-align: center; margin-top: 12px; }
     h2 { font-size: 32px; margin: 18px 0 8px; }
+    h3 { margin: 12px 0; }
     #ShowDateTime { font-size: 20px; font-weight: bold; }
     input[type="text"], input[type="password"] {
       width: 60%; max-width: 520px; padding: 10px; font-size: 22px; margin: 6px 8px 10px 0;
@@ -65,16 +66,6 @@
     <button data-mode="Backup" data-type="1">Clock In</button>
     <button data-mode="Backup" data-type="2">Clock Out</button>
 
-
-    <!--<h2>GPS 打卡（Manager Informed）</h2>  === -->
-    <!--<button data-mode="OnlyGps" data-type="1">上班</button>-->
-    <!--<button data-mode="OnlyGps" data-type="2">下班</button>-->
-    
-
-    <!--<h2>Wi-Fi 打卡（Manager Informed, Desktop 可用）</h2>-->
-    <!--<button data-mode="OnlyWifi" data-type="1">上班</button>-->
-    <!--<button data-mode="OnlyWifi" data-type="2">下班</button>-->
-
     <h2>目前訊號狀態</h2>
     <div class="status">Wi-Fi：<span id="wifiStatus">偵測中…</span>　GPS：<span id="gpsStatus">偵測中…</span></div>
   </div>
@@ -82,7 +73,7 @@
   <div id="toast" class="toast"></div>
 
 <script>
-/* === 1) 你的 Flow 端點：把下面字串換成實際 URL（含 sig=） === */
+/* === 1) Flow 端點（依你要求不改） === */
 const FLOW_URL = "https://bb11f2121ae2eb5d8ce4f378003e94.86.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2e969194d6c6468dac1d213313b09a90/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=8YeBjd08q50rdE_7JPS-E3dr3S_0s7kc3MNMJXPH9gg";
 
 /* === 2) UI === */
@@ -118,28 +109,26 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); // 公里
 }
 function getTaipeiTimeISO() {
-  return fetch("https://worldtimeapi.org/api/timezone/Asia/Taipei")
+  return fetch("https://worldtimeapi.org/api/timezone/Asia/Taipei", { cache: "no-store" })
     .then(r => r.json())
-    .then(j => j.datetime); // e.g. 2025-11-07T16:30:00.123456+08:00
+    .then(j => j.datetime).catch(()=>null);
 }
 function getPublicIP() {
-  return fetch("https://api64.ipify.org?format=json")
+  return fetch("https://api64.ipify.org?format=json", { cache: "no-store" })
     .then(r => r.json()).then(j => j.ip).catch(()=> null);
 }
 
-/* === 4) 送資料（重點：sendBeacon 避開 CORS） === */
+/* === 4) 送資料（sendBeacon 避開 CORS） === */
 function sendToFlow(payload) {
-  // 用 text/plain + sendBeacon 避免 preflight；Flow 仍可收到並由 Parse JSON 解析
   const blob = new Blob([JSON.stringify(payload)], { type: "text/plain;charset=UTF-8" });
   let ok = false;
   try { ok = navigator.sendBeacon(FLOW_URL, blob); } catch(e) { ok = false; }
   if (!ok) {
-    // 備援：no-cors fetch（仍避免 preflight；前端拿不到回應屬正常）
     fetch(FLOW_URL, { method: "POST", body: blob, mode: "no-cors" }).catch(() => {});
   }
 }
 
-/* === 5) GPS/Wi-Fi 狀態顯示 === */
+/* === 5) Wi-Fi / GPS 狀態（自動刷新） === */
 function detectWifi() {
   getPublicIP().then(ip => {
     const allow = {
@@ -147,32 +136,35 @@ function detectWifi() {
       "61.216.53.21":1,"61.216.53.22":1,"61.216.53.24":1,"60.249.202.15":1,"60.249.202.179":1,
       "60.249.202.180":1,"60.249.202.13":1,"61.219.152.91":1,"60.249.132.61":1
     };
-    document.getElementById('wifiStatus').textContent = allow[ip] ? "正常" : "未連線";
-    document.getElementById('wifiStatus').className = allow[ip] ? "ok" : "bad";
+    const el = document.getElementById('wifiStatus');
+    el.textContent = allow[ip] ? "正常" : "未連線";
+    el.className  = allow[ip] ? "ok" : "bad";
   });
 }
 function detectGPS() {
-  if (!navigator.geolocation) {
-    document.getElementById('gpsStatus').textContent = "不支援地理定位";
-    document.getElementById('gpsStatus').className = "bad";
-    return;
-  }
+  const el = document.getElementById('gpsStatus');
+  if (!navigator.geolocation) { el.textContent="不支援地理定位"; el.className="bad"; return; }
   navigator.geolocation.getCurrentPosition(pos => {
     const { latitude, longitude } = pos.coords;
     const d1 = calculateDistance(latitude, longitude, 22.6269627, 120.3101946);
     const d2 = calculateDistance(latitude, longitude, 22.6084169, 120.2735785);
     const d3 = calculateDistance(latitude, longitude, 22.6087448, 120.2734469);
     const minD = Math.min(d1,d2,d3);
-    document.getElementById('gpsStatus').textContent = minD < 0.3 ? "正常" : "尚未到達";
-    document.getElementById('gpsStatus').className = minD < 0.3 ? "ok" : "bad";
+    el.textContent = minD < 0.3 ? "正常" : "尚未到達";
+    el.className  = minD < 0.3 ? "ok" : "bad";
   }, _ => {
-    document.getElementById('gpsStatus').textContent = "無法獲得位置";
-    document.getElementById('gpsStatus').className = "bad";
-  });
+    el.textContent = "無法獲得位置";
+    el.className = "bad";
+  }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }); // 最新位置
 }
-window.addEventListener("load", () => { detectWifi(); detectGPS(); });
+function refreshSignals(){ detectWifi(); detectGPS(); }
+window.addEventListener("load", refreshSignals);
+setInterval(refreshSignals, 30000);
+document.addEventListener("visibilitychange", ()=> { if(!document.hidden) refreshSignals(); });
+window.addEventListener("online",  refreshSignals);
+window.addEventListener("offline", refreshSignals);
 
-/* === 6) 主流程：組 payload → sendBeacon === */
+/* === 6) 主流程：組 payload → 門檻（OR）→ sendBeacon === */
 function nowDate() {
   const d=new Date();
   const z=n=>(n<10?'0':'')+n;
@@ -189,11 +181,12 @@ async function submitPunch(ksitype, methodTag) {
   if (!emailUser) { toast("請先輸入帳號"); return; }
   if (!password) { toast("請先輸入打卡密碼"); return; }
 
-  // 先抓 IP / TaipeiTime（非必要可並行）
-  const [ip, taipeiISO] = await Promise.all([getPublicIP(), getTaipeiTimeISO().catch(()=>null)]);
+  // 抓最新 IP / 台北時間
+  const [ip, taipeiISO] = await Promise.all([getPublicIP(), getTaipeiTimeISO()]);
 
+  // 抓最新 GPS 與距離
   let lat=null, lng=null, alt=null, minDistance=999;
-  const getPos = new Promise(resolve => {
+  await new Promise(resolve => {
     if (!navigator.geolocation) return resolve();
     navigator.geolocation.getCurrentPosition(p => {
       lat = p.coords.latitude; lng = p.coords.longitude; alt = p.coords.altitude ?? null;
@@ -202,24 +195,36 @@ async function submitPunch(ksitype, methodTag) {
       const d3 = calculateDistance(lat, lng, 22.6087448, 120.2734469);
       minDistance = Math.min(d1,d2,d3);
       resolve();
-    }, _ => resolve(), { enableHighAccuracy: true, timeout: 8000 });
+    }, _ => resolve(), { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
   });
-  await getPos;
+
+  // ★ 門檻：距離內 OR 白名單 IP 其一成立即可；反之才擋
+  const allow = {
+    "61.216.53.19":1,"61.216.53.23":1,"60.249.202.14":1,"60.249.202.178":1,"61.216.53.20":1,
+    "61.216.53.21":1,"61.216.53.22":1,"61.216.53.24":1,"60.249.202.15":1,"60.249.202.179":1,
+    "60.249.202.180":1,"60.249.202.13":1,"61.219.152.91":1,"60.249.132.61":1
+  };
+  const ipAllowed  = !!allow[ip];
+  const nearOffice = Number.isFinite(minDistance) && minDistance < 0.3;
+  if (!(nearOffice || ipAllowed)) {
+    toast("位置/網路不符規範：請到辦公室或連公司 Wi-Fi 再打卡");
+    return;
+  }
 
   const payload = {
     email: `${emailUser}@dragon-geosciences.com`,
-    ksitype: ksitype,                    // "1" 上班 / "2" 下班（沿用你的設計）
+    ksitype: ksitype,                    // "1" 上班 / "2" 下班
     date: nowDate(),                     // "YYYY-MM-DD"
     time: nowTime(),                     // "HH:mm:ss"
     altitude: alt,                       // number | null
     latitude: lat,                       // number | null
     longitude: lng,                      // number | null
     ipAddress: ip,                       // string | null
-    taipeiTime: taipeiISO,               // string | null（完整 ISO）
-    method: methodTag + "_" + getDeviceType(),                   // "WifiGps" | "OnlyGps" | "OnlyWifi"
-    password: password,                  // string
-    device: getDeviceType(),             // string
-    minDistance: Number.isFinite(minDistance) ? minDistance : 999 // number
+    taipeiTime: taipeiISO,               // string | null
+    method: methodTag + "_" + getDeviceType(),
+    password: password,
+    device: getDeviceType(),
+    minDistance: Number.isFinite(minDistance) ? minDistance : 999
   };
 
   sendToFlow(payload);
@@ -237,18 +242,3 @@ document.querySelectorAll("button[data-mode]").forEach(btn => {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
