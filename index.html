@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DG備援打卡系統2（GitHub Pages 版）</title>
+  <title>Clock-In-Out (Backup System)</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
     body {
@@ -46,8 +46,8 @@
 </head>
 <body>
   <div class="panel">
-    <h1>DG備援打卡系統（GitHub 版）</h1>
-    <h2>現在時間：<span id="ShowDateTime"></span></h2>
+    <h1>Clock-In-Out（Bakcup System）</h1>
+    <h2>Now：<span id="ShowDateTime"></span></h2>
 
     <h2>請輸入 Email 與打卡密碼</h2>
     <div>
@@ -64,9 +64,9 @@
     <button data-mode="WifiGps" data-type="1">上班</button>
     <button data-mode="WifiGps" data-type="2">下班</button>
 
-    <h2>GPS 打卡（Manager Informed）</h2>
-    <button data-mode="OnlyGps" data-type="1">上班</button>
-    <button data-mode="OnlyGps" data-type="2">下班</button>
+    //<h2>GPS 打卡（Manager Informed）</h2>
+    //<button data-mode="OnlyGps" data-type="1">上班</button>
+    //<button data-mode="OnlyGps" data-type="2">下班</button>
 
     <h2>Wi-Fi 打卡（Manager Informed, Desktop 可用）</h2>
     <button data-mode="OnlyWifi" data-type="1">上班</button>
@@ -234,4 +234,5 @@ document.querySelectorAll("button[data-mode]").forEach(btn => {
 </script>
 </body>
 </html>
+
 
