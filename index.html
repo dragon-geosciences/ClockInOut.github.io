@@ -62,8 +62,8 @@
     </div>
 
     <h3>Use this backup interface only if the main system is down. Please keep a screenshot of the issue for record. Records will be forwarded to HR for verification.</h3>
-    <button data-mode="WifiGps" data-type="1">上班</button>
-    <button data-mode="WifiGps" data-type="2">下班</button>
+    <button data-mode="Backup" data-type="1">Clock In</button>
+    <button data-mode="Backup" data-type="2">Clock Out</button>
 
 
     <!--<h2>GPS 打卡（Manager Informed）</h2>  === -->
@@ -216,7 +216,7 @@ async function submitPunch(ksitype, methodTag) {
     longitude: lng,                      // number | null
     ipAddress: ip,                       // string | null
     taipeiTime: taipeiISO,               // string | null（完整 ISO）
-    method: methodTag,                   // "WifiGps" | "OnlyGps" | "OnlyWifi"
+    method: methodTag + "_" + getDeviceType(),                   // "WifiGps" | "OnlyGps" | "OnlyWifi"
     password: password,                  // string
     device: getDeviceType(),             // string
     minDistance: Number.isFinite(minDistance) ? minDistance : 999 // number
@@ -237,6 +237,7 @@ document.querySelectorAll("button[data-mode]").forEach(btn => {
 </script>
 </body>
 </html>
+
 
 
 
