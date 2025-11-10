@@ -53,13 +53,13 @@
 
     <h3>Enter your Username & Password</h3>
     <div>
-      <input type="text" id="emailInput" placeholder="username only, before 「@」" />
+      <input type="text" id="emailInput" placeholder="Name only, no @..." />
       <span class="tag">@dragon-geosciences.com</span>
     </div>
     <div>
-      <input type="password" id="passwordInput" placeholder="打卡密碼" />
-      <button id="togglePwd">🔓 顯示密碼</button>
-      <a class="tag" href="https://apps.powerapps.com/play/e/bb11f212-1ae2-eb5d-8ce4-f378003e9486/a/cc0698c0-b4e6-4328-ab41-864959c42446?tenantId=4475b104-50f2-419f-a8fc-ac004dcde2c1&ScreenChoice=Password" target="_blank">《忘記或建立密碼》</a>
+      <input type="password" id="passwordInput" placeholder="Password" />
+      <button id="togglePwd">🔓 Show Password</button>
+      <a class="tag" href="https://apps.powerapps.com/play/e/bb11f212-1ae2-eb5d-8ce4-f378003e9486/a/cc0698c0-b4e6-4328-ab41-864959c42446?tenantId=4475b104-50f2-419f-a8fc-ac004dcde2c1&ScreenChoice=Password" target="_blank">《Forgot/Create Password》</a>
     </div>
 
     <h3>Use this backup interface only if the main system is down. Please keep a screenshot of the issue for record. Records will be forwarded to HR for verification.</h3>
@@ -86,8 +86,8 @@ function toast(msg) {
 document.getElementById('togglePwd').onclick = () => {
   const ipt = document.getElementById('passwordInput');
   const btn = document.getElementById('togglePwd');
-  if (ipt.type === 'password') { ipt.type='text'; btn.textContent='🔒 隱藏密碼'; }
-  else { ipt.type='password'; btn.textContent='🔓 顯示密碼'; }
+  if (ipt.type === 'password') { ipt.type='text'; btn.textContent='🔒 Hide Password'; }
+  else { ipt.type='password'; btn.textContent='🔓 Show Password'; }
 };
 function tickClock() {
   const d = new Date();
@@ -242,6 +242,7 @@ document.querySelectorAll("button[data-mode]").forEach(btn => {
 </script>
 </body>
 </html>
+
 
 
 
