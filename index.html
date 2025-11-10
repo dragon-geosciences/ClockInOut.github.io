@@ -150,8 +150,8 @@ function detectGPS() {
     const d2 = calculateDistance(latitude, longitude, 22.6084169, 120.2735785);
     const d3 = calculateDistance(latitude, longitude, 22.6087448, 120.2734469);
     const minD = Math.min(d1,d2,d3);
-    el.textContent = minD < 0.3 ? "正常" : "尚未到達";
-    el.className  = minD < 0.3 ? "ok" : "bad";
+    el.textContent = minD < 0.1 ? "正常" : "尚未到達";
+    el.className  = minD < 0.1 ? "ok" : "bad";
   }, _ => {
     el.textContent = "無法獲得位置";
     el.className = "bad";
@@ -205,7 +205,7 @@ async function submitPunch(ksitype, methodTag) {
     "60.249.202.180":1,"60.249.202.13":1,"61.219.152.91":1,"60.249.132.61":1
   };
   const ipAllowed  = !!allow[ip];
-  const nearOffice = Number.isFinite(minDistance) && minDistance < 0.3;
+  const nearOffice = Number.isFinite(minDistance) && minDistance < 0.1;
   if (!(nearOffice || ipAllowed)) {
     toast("位置/網路不符規範：請到辦公室或連公司 Wi-Fi 再打卡");
     return;
@@ -242,4 +242,5 @@ document.querySelectorAll("button[data-mode]").forEach(btn => {
 </script>
 </body>
 </html>
+
 
