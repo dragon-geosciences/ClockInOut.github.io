@@ -66,8 +66,8 @@
     <button data-mode="Backup" data-type="1">Clock In</button>
     <button data-mode="Backup" data-type="2">Clock Out</button>
 
-    <h2>目前訊號狀態</h2>
-    <div class="status">Wi-Fi：<span id="wifiStatus">偵測中…</span>　GPS：<span id="gpsStatus">偵測中…</span></div>
+    <h2>Current Signal Status</h2>
+    <div class="status">Wi-Fi：<span id="wifiStatus">Detecting……</span>　GPS：<span id="gpsStatus">Detecting…</span></div>
   </div>
 
   <div id="toast" class="toast"></div>
@@ -137,7 +137,7 @@ function detectWifi() {
       "60.249.202.180":1,"60.249.202.13":1,"61.219.152.91":1,"60.249.132.61":1
     };
     const el = document.getElementById('wifiStatus');
-    el.textContent = allow[ip] ? "正常" : "未連線";
+    el.textContent = allow[ip] ? "Normal" : "Not Connected";
     el.className  = allow[ip] ? "ok" : "bad";
   });
 }
@@ -150,10 +150,10 @@ function detectGPS() {
     const d2 = calculateDistance(latitude, longitude, 22.6084169, 120.2735785);
     const d3 = calculateDistance(latitude, longitude, 22.6087448, 120.2734469);
     const minD = Math.min(d1,d2,d3);
-    el.textContent = minD < 0.1 ? "正常" : "尚未到達";
+    el.textContent = minD < 0.1 ? "Normal" : "Not Yet Arrived";
     el.className  = minD < 0.1 ? "ok" : "bad";
   }, _ => {
-    el.textContent = "無法獲得位置";
+    el.textContent = "Unable to obtain location";
     el.className = "bad";
   }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }); // 最新位置
 }
@@ -179,8 +179,8 @@ function nowTime() {
 async function submitPunch(ksitype, methodTag) {
   const emailUser = $("#emailInput").val().trim();
   const password = $("#passwordInput").val().trim();
-  if (!emailUser) { toast("請先輸入帳號"); return; }
-  if (!password) { toast("請先輸入打卡密碼"); return; }
+  if (!emailUser) { toast("Please enter your account"); return; }
+  if (!password) { toast("Please enter your clock-in password"); return; }
 
   // 抓最新 IP / 台北時間
   const [ip, taipeiISO] = await Promise.all([getPublicIP(), getTaipeiTimeISO()]);
@@ -208,7 +208,7 @@ async function submitPunch(ksitype, methodTag) {
   const ipAllowed  = !!allow[ip];
   const nearOffice = Number.isFinite(minDistance) && minDistance < 0.1;
   if (!(nearOffice || ipAllowed)) {
-    toast("位置/網路不符規範：請到辦公室或連公司 Wi-Fi 再打卡");
+    toast("Location/Network does not meet requirements: Please go to the office or connect to the company Wi-Fi before clocking in.");
     return;
   }
 
@@ -216,7 +216,7 @@ async function submitPunch(ksitype, methodTag) {
     email: `${emailUser}@dragon-geosciences.com`,
     ksitype: ksitype,                    // "1" 上班 / "2" 下班
     date: nowDate(),                     // "yyyy/M/D"
-    time: nowTime(),                     // "HH:mm:ss"
+    time: nowTime(),                     // "HH:mm"
     altitude: alt,                       // number | null
     latitude: lat,                       // number | null
     longitude: lng,                      // number | null
@@ -229,7 +229,7 @@ async function submitPunch(ksitype, methodTag) {
   };
 
   sendToFlow(payload);
-  toast("已送出（瀏覽器不回應內容，請到 Flow 執行紀錄確認）");
+  toast("Submit successfully");
 }
 
 /* === 7) 綁定按鈕 === */
@@ -243,6 +243,7 @@ document.querySelectorAll("button[data-mode]").forEach(btn => {
 </script>
 </body>
 </html>
+
 
 
 
