@@ -171,10 +171,11 @@ function nowDate() {
 }
 
 function nowTime() {
-  const d=new Date();
-  const z=n=>(n<10?'0':'')+n;
-  return `${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;
+  const d = new Date();
+  const z = n => (n<10 ? '0' : '') + n;
+  return `${z(d.getHours())}:${z(d.getMinutes())}`;
 }
+
 async function submitPunch(ksitype, methodTag) {
   const emailUser = $("#emailInput").val().trim();
   const password = $("#passwordInput").val().trim();
@@ -214,7 +215,7 @@ async function submitPunch(ksitype, methodTag) {
   const payload = {
     email: `${emailUser}@dragon-geosciences.com`,
     ksitype: ksitype,                    // "1" 上班 / "2" 下班
-    date: nowDate(),                     // "YYYY-MM-DD"
+    date: nowDate(),                     // "yyyy/M/D"
     time: nowTime(),                     // "HH:mm:ss"
     altitude: alt,                       // number | null
     latitude: lat,                       // number | null
@@ -242,6 +243,7 @@ document.querySelectorAll("button[data-mode]").forEach(btn => {
 </script>
 </body>
 </html>
+
 
 
 
