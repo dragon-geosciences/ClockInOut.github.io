@@ -166,10 +166,10 @@ window.addEventListener("offline", refreshSignals);
 
 /* === 6) 主流程：組 payload → 門檻（OR）→ sendBeacon === */
 function nowDate() {
-  const d=new Date();
-  const z=n=>(n<10?'0':'')+n;
-  return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`;
+  const d = new Date();
+  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
 }
+
 function nowTime() {
   const d=new Date();
   const z=n=>(n<10?'0':'')+n;
@@ -242,6 +242,7 @@ document.querySelectorAll("button[data-mode]").forEach(btn => {
 </script>
 </body>
 </html>
+
 
 
 
